@@ -43,6 +43,7 @@ struct CBChangesEveryFrame
 //HWND                                g_hWnd = NULL;
 Window                              g_window;
 Device                              g_device;
+DeviceContext                       g_deviceContext;
 
 D3D_DRIVER_TYPE                     g_driverType = D3D_DRIVER_TYPE_NULL;
 D3D_FEATURE_LEVEL                   g_featureLevel = D3D_FEATURE_LEVEL_11_0;
