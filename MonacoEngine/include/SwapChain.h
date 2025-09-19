@@ -47,7 +47,7 @@ public:
     HRESULT init(Device& device,
         DeviceContext& deviceContext,
         Texture& backBuffer,
-        Window window);
+        Window& window);
 
     /**
      * @brief Actualiza parámetros internos del Swap Chain.
@@ -127,4 +127,9 @@ private:
      * @brief Interfaz DXGI para la fábrica (creación de swap chains).
      */
     IDXGIFactory* m_dxgiFactory = nullptr;
+
+
+   
+    
+
 };
