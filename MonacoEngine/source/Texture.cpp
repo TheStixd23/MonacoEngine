@@ -2,28 +2,28 @@
 #include "Device.h"
 #include "DeviceContext.h"
 
-HRESULT Texture::init(Device& device, const std::string& textureName, ExtensionType extensionType)
-{
+HRESULT
+Texture::init(Device& device,
+    const std::string& textureName,
+    ExtensionType extensionType) {
     return E_NOTIMPL;
 }
 
-HRESULT 
-Texture::init(Device& device, 
-                unsigned int width, 
-                unsigned int height, 
-                DXGI_FORMAT Format, 
-                unsigned int BindFlags, 
-                unsigned int sampleCount, 
-                unsigned int qualityLevels)
-{
+HRESULT
+Texture::init(Device& device,
+    unsigned int width,
+    unsigned int height,
+    DXGI_FORMAT Format,
+    unsigned int BindFlags,
+    unsigned int sampleCount,
+    unsigned int qualityLevels) {
     if (!device.m_device) {
         ERROR("Texture", "init", "Device is null.");
         return E_POINTER;
     }
-
     if (width == 0 || height == 0) {
         ERROR("Texture", "init", "Width and height must be greater than 0");
-        return E_INVALIDARG;
+        E_INVALIDARG;
     }
 
     // Config the texture

@@ -24,7 +24,7 @@ Window::init(HINSTANCE hInstance, int nCmdShow, WNDPROC wndproc) {
         return E_FAIL;
 
     // Create window
-    RECT rc = { 0, 0, 1200, 1080 };
+    RECT rc = { 0, 0, 1200, 950 };
     m_rect = rc;
 
     AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
@@ -57,10 +57,6 @@ Window::init(HINSTANCE hInstance, int nCmdShow, WNDPROC wndproc) {
     m_height = m_rect.bottom - m_rect.top;
 
     return S_OK;
-}
-
-void Device::init()
-{
 }
 
 void
