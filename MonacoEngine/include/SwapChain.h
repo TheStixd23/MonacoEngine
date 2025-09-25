@@ -44,10 +44,11 @@ public:
      *
      * @post Si retorna @c S_OK, @c m_swapChain != nullptr.
      */
-    HRESULT init(Device& device,
-        DeviceContext& deviceContext,
-        Texture& backBuffer,
-        Window& window);
+    HRESULT init(Device& device, 
+        DeviceContext& deviceContext, 
+        Texture& backBuffer, 
+        Window window);
+
 
     /**
      * @brief Actualiza parámetros internos del Swap Chain.
@@ -131,5 +132,6 @@ private:
 
    
     
+
 
 };
