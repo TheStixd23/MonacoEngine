@@ -64,9 +64,6 @@ void
 Window::update() {
 }
 
-void DeviceContext::init()
-{
-}
 
 void
 Window::render() {
