@@ -4,19 +4,20 @@
 #include "Texture.h"
 #include "Window.h"
 
-HRESULT SwapChain::init(
-    Device& device,
+HRESULT
+SwapChain::init(Device& device,
     DeviceContext& deviceContext,
     Texture& backBuffer,
-    Window& window)
-{
+    Window window) {
+    // Check if Window is valid
     if (!window.m_hWnd) {
-        ERROR("SwapChain", "init", "Invalid window handle (m_hWnd is nullptr).");
+        ERROR("SwapChain", "init", "Invalid window handle. (m_hWnd is nullptr)");
         return E_POINTER;
     }
 
     HRESULT hr = S_OK;
 
+    // Create the swap chain device and context
     unsigned int createDeviceFlags = 0;
 #ifdef _DEBUG
     createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
@@ -36,10 +37,10 @@ HRESULT SwapChain::init(
     };
     unsigned int numFeatureLevels = ARRAYSIZE(featureLevels);
 
+    // Create the device
     for (unsigned int driverTypeIndex = 0; driverTypeIndex < numDriverTypes; driverTypeIndex++) {
         D3D_DRIVER_TYPE driverType = driverTypes[driverTypeIndex];
-        hr = D3D11CreateDevice(
-            nullptr,
+        hr = D3D11CreateDevice(nullptr,
             driverType,
             nullptr,
             createDeviceFlags,
@@ -64,8 +65,9 @@ HRESULT SwapChain::init(
 
     // Config the MSAA settings
     m_sampleCount = 4;
-    hr = device.m_device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, m_sampleCount, &m_qualityLevels);
-
+    hr = device.m_device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM,
+        m_sampleCount,
+        &m_qualityLevels);
     if (FAILED(hr) || m_qualityLevels == 0) {
         ERROR("SwapChain", "init",
             ("MSAA not supported or invalid quality level. HRESULT: " + std::to_string(hr)).c_str());
@@ -103,7 +105,8 @@ HRESULT SwapChain::init(
         return hr;
     }
 
-    hr = m_dxgiAdapter->GetParent(__uuidof(IDXGIFactory), reinterpret_cast<void**>(&m_dxgiFactory));
+    hr = m_dxgiAdapter->GetParent(__uuidof(IDXGIFactory),
+        reinterpret_cast<void**>(&m_dxgiFactory));
     if (FAILED(hr)) {
         ERROR("SwapChain", "init",
             ("Failed to get IDXGIFactory. HRESULT: " + std::to_string(hr)).c_str());
@@ -120,12 +123,14 @@ HRESULT SwapChain::init(
     }
 
     // Get the backbuffer
-    hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
+    hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
+        reinterpret_cast<void**>(&backBuffer));
     if (FAILED(hr)) {
         ERROR("SwapChain", "init",
             ("Failed to get back buffer. HRESULT: " + std::to_string(hr)).c_str());
         return hr;
     }
+
     return S_OK;
 }
 
@@ -145,7 +150,8 @@ SwapChain::destroy() {
     }
 }
 
-void SwapChain::present() {
+void
+SwapChain::present() {
     if (m_swapChain) {
         HRESULT hr = m_swapChain->Present(0, 0);
         if (FAILED(hr)) {

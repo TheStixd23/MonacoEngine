@@ -1,6 +1,6 @@
 #include "Window.h"
 #include "Device.h"
-#include "SwapChain.h"
+#include "DeviceContext.h"
 
 HRESULT
 Window::init(HINSTANCE hInstance, int nCmdShow, WNDPROC wndproc) {
@@ -64,9 +64,8 @@ void
 Window::update() {
 }
 
-HRESULT SwapChain::init(Device& device, DeviceContext& deviceContext, Texture& backBuffer, Window window)
+void DeviceContext::init()
 {
-    return E_NOTIMPL;
 }
 
 void

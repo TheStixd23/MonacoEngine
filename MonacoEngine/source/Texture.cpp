@@ -2,35 +2,34 @@
 #include "Device.h"
 #include "DeviceContext.h"
 
-
 HRESULT
 Texture::init(Device& device,
-    const std::string& texturename,
+    const std::string& textureName,
     ExtensionType extensionType) {
     return E_NOTIMPL;
 }
 
 HRESULT
 Texture::init(Device& device,
-    unsigned int widht,
+    unsigned int width,
     unsigned int height,
     DXGI_FORMAT Format,
     unsigned int BindFlags,
     unsigned int sampleCount,
     unsigned int qualityLevels) {
     if (!device.m_device) {
-        ERROR("Texture", "init", "Device is null");
+        ERROR("Texture", "init", "Device is null.");
         return E_POINTER;
     }
-    if (widht == 0 || height == 0) {
-        ERROR("Texture", "init", "Widht and height must be greater than 0");
+    if (width == 0 || height == 0) {
+        ERROR("Texture", "init", "Width and height must be greater than 0");
         E_INVALIDARG;
     }
 
-    // Create depth stencil texture
+    // Config the texture
     D3D11_TEXTURE2D_DESC desc;
     memset(&desc, 0, sizeof(desc));
-    desc.Width = widht;
+    desc.Width = width;
     desc.Height = height;
     desc.MipLevels = 1;
     desc.ArraySize = 1;
@@ -48,7 +47,6 @@ Texture::init(Device& device,
         ERROR("Texture", "init",
             ("Failed to create texture with specified params. HRESULT: " + std::to_string(hr)).c_str());
         return hr;
-
     }
 
     return S_OK;
@@ -57,14 +55,14 @@ Texture::init(Device& device,
 HRESULT
 Texture::init(Device& device, Texture& textureRef, DXGI_FORMAT format) {
     if (!device.m_device) {
-        ERROR("Texture", "init", "Device is nulll.");
+        ERROR("Texture", "init", "Device is null.");
         return E_POINTER;
     }
     if (!textureRef.m_texture) {
-        ERROR("Texture", "init", "Texture is null");
+        ERROR("Texture", "init", "Texture is null.");
         return E_POINTER;
     }
-    //Create Shaders Resource View
+    // Create Shader Resource View
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
     srvDesc.Format = format;
     srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
@@ -80,6 +78,8 @@ Texture::init(Device& device, Texture& textureRef, DXGI_FORMAT format) {
             ("Failed to create shader resource view for PNG textures. HRESULT: " + std::to_string(hr)).c_str());
         return hr;
     }
+
+    return S_OK;
 }
 
 void
@@ -87,18 +87,17 @@ Texture::update() {
 
 }
 
-
 void
 Texture::render(DeviceContext& deviceContext,
     unsigned int StartSlot,
-    unsigned int NumView) {
+    unsigned int NumViews) {
     if (!deviceContext.m_deviceContext) {
         ERROR("Texture", "render", "Device Context is null.");
         return;
     }
 
     if (m_textureFromImg) {
-        deviceContext.PSSetShaderResources(StartSlot, NumView, &m_textureFromImg);
+        deviceContext.PSSetShaderResources(StartSlot, NumViews, &m_textureFromImg);
     }
 }
 

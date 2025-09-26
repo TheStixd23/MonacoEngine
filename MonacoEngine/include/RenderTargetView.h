@@ -7,42 +7,37 @@ class DeviceContext;
 class Texture;
 class DepthStencilView;
 
-class RenderTargetView
-{
+class
+	RenderTargetView {
 public:
-    RenderTargetView() = default;
-    ~RenderTargetView() = default;
+	RenderTargetView() = default;
 
-    HRESULT 
-    init(Device& device, 
-        Texture& backBuffer, 
-        DXGI_FORMAT Format);
+	~RenderTargetView() = default;
 
-    HRESULT 
-    init(Device& device, 
-        Texture& inTex, 
-        D3D11_RTV_DIMENSION 
-        ViewDimension, DXGI_FORMAT Format);
+	HRESULT
+		init(Device& device, Texture& backBuffer, DXGI_FORMAT Format);
 
-    void update();
+	HRESULT
+		init(Device& device,
+			Texture& inTex,
+			D3D11_RTV_DIMENSION ViewDimension,
+			DXGI_FORMAT Format);
 
-    void 
-    render(DeviceContext& deviceContext,
-            DepthStencilView& depthStencilView, 
-            unsigned int numViews,
-            const float ClearColor[4]);
+	void
+		update();
 
-    void 
-    render(DeviceContext& deviceContext, 
-        unsigned int numViews);
+	void
+		render(DeviceContext& deviceContext,
+			DepthStencilView& depthStencilView,
+			unsigned int numViews,
+			const float ClearColor[4]);
 
-    void 
-    destroy();
+	void
+		render(DeviceContext& deviceContext,
+			unsigned int numViews);
 
+	void
+		destroy();
 private:
-    /**
-     * @brief Recurso COM de Direct3D 11 para la vista de Render Target.
-     * @details Válido tras init(); @c nullptr después de destroy().
-     */
-    ID3D11RenderTargetView* m_renderTargetView = nullptr;
+	ID3D11RenderTargetView* m_renderTargetView = nullptr;
 };
