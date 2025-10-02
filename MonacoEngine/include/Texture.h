@@ -6,137 +6,71 @@ class DeviceContext;
 
 /**
  * @class Texture
- * @brief Encapsula una textura 2D en Direct3D 11, incluyendo su recurso y vista como Shader Resource.
+ * @brief Envuelve una textura 2D en Direct3D 11, incluyendo su recurso y Shader Resource View.
  *
- * Esta clase administra texturas que pueden provenir de:
- * - Archivos de imagen (png, jpg, etc.).
- * - Texturas creadas en memoria (RTV, DSV, UAV).
- * - Copias a partir de otra textura.
- *
- * Proporciona métodos para inicialización, actualización, uso en shaders y destrucción.
+ * Se encarga de texturas cargadas desde archivo, creadas en memoria o copias de otras texturas.
+ * Permite inicialización, actualización, asignación a shaders y destrucción segura.
  */
-class
-	Texture {
+class Texture {
 public:
-	/**
-	 * @brief Constructor por defecto.
-	 */
+	/** Constructor por defecto */
 	Texture() = default;
 
-	/**
-	 * @brief Destructor por defecto.
-	 * @details No libera automáticamente los recursos COM; llamar a destroy().
+	/** Destructor por defecto
+	 * @note No libera automáticamente; hay que llamar a destroy().
 	 */
 	~Texture() = default;
 
-	/**
-	 * @brief Inicializa una textura cargada desde archivo.
+	/** Inicializa la textura desde un archivo (png, jpg, dds, etc.)
 	 *
-	 * Crea un recurso de textura a partir de un archivo de imagen y genera su
-	 * ShaderResourceView correspondiente para ser usado en shaders.
-	 *
-	 * @param device Dispositivo con el que se creará la textura.
-	 * @param textureName Nombre o ruta del archivo de textura.
-	 * @param extensionType Tipo de extensión de archivo (ej. PNG, JPG, DDS).
-	 * @return S_OK si fue exitoso; código HRESULT en caso contrario.
-	 *
-	 * @post Si retorna S_OK, m_texture y m_textureFromImg != nullptr.
+	 * Crea el recurso y su ShaderResourceView para poder usarla en shaders.
 	 */
-	HRESULT
-		init(Device& device,
-			const std::string& textureName,
-			ExtensionType extensionType);
+	HRESULT init(Device& device,
+		const std::string& textureName,
+		ExtensionType extensionType);
 
-	/**
-	 * @brief Inicializa una textura creada desde memoria.
+	/** Inicializa una textura desde memoria
 	 *
-	 * Crea un recurso de textura 2D vacío con un tamaño y formato especificados.
 	 * Útil para render targets, depth buffers o texturas dinámicas.
-	 *
-	 * @param device Dispositivo con el que se creará la textura.
-	 * @param width Ancho de la textura en píxeles.
-	 * @param height Alto de la textura en píxeles.
-	 * @param Format Formato DXGI de la textura (ej. DXGI_FORMAT_R8G8B8A8_UNORM).
-	 * @param BindFlags Banderas de enlace (ej. D3D11_BIND_SHADER_RESOURCE, D3D11_BIND_RENDER_TARGET).
-	 * @param sampleCount Número de muestras para MSAA (por defecto 1 = sin MSAA).
-	 * @param qualityLevels Niveles de calidad soportados para MSAA.
-	 * @return S_OK si fue exitoso; código HRESULT en caso contrario.
 	 */
-	HRESULT
-		init(Device& device,
-			unsigned int width,
-			unsigned int height,
-			DXGI_FORMAT Format,
-			unsigned int BindFlags,
-			unsigned int sampleCount = 1,
-			unsigned int qualityLevels = 0);
+	HRESULT init(Device& device,
+		unsigned int width,
+		unsigned int height,
+		DXGI_FORMAT Format,
+		unsigned int BindFlags,
+		unsigned int sampleCount = 1,
+		unsigned int qualityLevels = 0);
 
-	/**
-	 * @brief Inicializa una textura a partir de otra existente.
+	/** Inicializa una textura a partir de otra existente
 	 *
-	 * Crea una nueva textura basada en la descripción de textureRef,
-	 * con un formato diferente.
-	 *
-	 * @param device Dispositivo con el que se creará la textura.
-	 * @param textureRef Referencia a otra textura existente.
-	 * @param format Nuevo formato DXGI de la textura.
-	 * @return S_OK si fue exitoso; código HRESULT en caso contrario.
+	 * Permite crear una nueva textura basada en otra, posiblemente con un formato distinto.
 	 */
-	HRESULT
-		init(Device& device, Texture& textureRef, DXGI_FORMAT format);
+	HRESULT init(Device& device, Texture& textureRef, DXGI_FORMAT format);
 
-	/**
-	 * @brief Actualiza el contenido de la textura.
-	 *
-	 * Método de marcador, útil para soportar carga dinámica de datos o streaming
-	 * de texturas desde CPU hacia GPU.
-	 *
-	 * @note Actualmente no realiza ninguna operación.
+	/** Actualiza la textura
+	 * @note Placeholder por ahora; útil si quieres actualizar datos dinámicamente desde CPU a GPU.
 	 */
-	void
-		update();
+	void update();
 
-	/**
-	 * @brief Asigna la textura al pipeline de render.
+	/** Asigna la textura al pipeline de render
 	 *
-	 * Llama a PSSetShaderResources para establecer la textura como
-	 * recurso de shader en la etapa de Pixel Shader.
-	 *
-	 * @param deviceContext Contexto donde se aplicará la textura.
-	 * @param StartSlot Slot inicial en el que se vinculará la textura.
-	 * @param NumViews Número de vistas de recurso a asignar (normalmente 1).
-	 *
-	 * @pre m_textureFromImg debe haberse creado con init().
+	 * Llama a PSSetShaderResources para poner la textura como recurso de Pixel Shader.
 	 */
-	void
-		render(DeviceContext& deviceContext, unsigned int StartSlot, unsigned int NumViews);
+	void render(DeviceContext& deviceContext, unsigned int StartSlot, unsigned int NumViews);
 
-	/**
-	 * @brief Libera los recursos de la textura.
+	/** Libera recursos de la textura
 	 *
-	 * Libera tanto el recurso de textura (ID3D11Texture2D) como su
-	 * ShaderResourceView asociado.
-	 *
-	 * @post m_texture == nullptr y m_textureFromImg == nullptr.
+	 * Libera tanto la textura como su ShaderResourceView asociada.
 	 */
-	void
-		destroy();
+	void destroy();
 
 public:
-	/**
-	 * @brief Recurso base de la textura en GPU.
-	 */
+	/** Recurso base de la textura en GPU */
 	ID3D11Texture2D* m_texture = nullptr;
 
-	/**
-	 * @brief Vista de la textura como recurso de shader.
-	 *
-	 * Permite acceder a la textura desde Pixel Shader u otros shaders.
-	 */
+	/** ShaderResourceView de la textura, para usar en shaders */
 	ID3D11ShaderResourceView* m_textureFromImg = nullptr;
 
-	/**
-	 * @brief Nombre o ruta de la textura (si proviene de archivo).
-	 */
+	/** Nombre o ruta de la textura (si proviene de archivo) */
 	std::string m_textureName;
 };
