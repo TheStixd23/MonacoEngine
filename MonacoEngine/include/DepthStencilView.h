@@ -73,7 +73,7 @@ public:
 
 public:
 	/**
-	 * @brief Vista de profundidad/esténcil de Direct3D 11.
+	 * @brief Vista de profundidad de Direct3D 11.
 	 * @details Válido después de una llamada exitosa a init(); nullptr tras destroy().
 	 */
 	ID3D11DepthStencilView* m_depthStencilView = nullptr;
