@@ -134,16 +134,3 @@ Aquí algunos métodos importantes que podrían existir:
 - `Light::parameters()`  
 
 ---
-
-## 💻 Requisitos / Cómo ejecutar
-
-**Requisitos**  
-- Sistema operativo: Windows / Linux / macOS (según lo que soporte tu motor)  
-- Librerías gráficas: OpenGL (versión mínima), Vulkan, DirectX, etc.  
-- Un compilador compatible con C++17 (u otra versión que uses)  
-- Dependencias externas (librerías math, SDL/GLFW, stb_image, etc.)
-
-**Pasos para ejecutar**  
-1. Clona este repositorio  
-   ```bash
-   git clone https://github.com/tu-usuario/MonacoEngine.git
