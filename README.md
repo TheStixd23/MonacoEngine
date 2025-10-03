@@ -64,34 +64,42 @@ El flujo típico entre componentes es:
 
 ## 📷 Pipeline gráfico implementado
 
-Este es el pipeline gráfico básico que MonacoEngine debe implementar:
+@startuml
+title MonacoEngine - Modern Render Pipeline (Hybrid)
 
-1. **Inicialización gráfica**  
-   - Crear contexto / dispositivo gráfico  
-   - Crear y compilar shaders  
-   - Crear buffers (vertex, index, constantes)  
-   - Configurar estado gráfico (viewport, rasterizador, depth test, blending)
-
-2. **Transformaciones / Etapa de vértice**  
-   - Aplicar transformaciones: `model → world → view → projection`  
-   - Realizar frustum culling o backface culling si aplica  
-   - Enviar posiciones, normales, UVs a la etapa de fragmento
-
-3. **Rasterización / fragmentación**  
-   - Rasterizar primitivas (triángulos)  
-   - Interpolar atributos (normales, UVs) por fragmento
-
-4. **Shading / iluminación**  
-   - Ejecutar shader fragmento para calcular color: ambient + difusa + especular  
-   - Muestreo de texturas, mapas normales u otros mapas
-
-5. **Depth / Blending / Salida**  
-   - Prueba de profundidad (z-buffer)  
-   - Blending si hay transparencia  
-   - Escritura al frame buffer
-
-6. **Presentación / Swap**  
-   - Intercambiar los buffers para mostrar la imagen final
+start
+:Update Scene (transforms, animations, physics);
+:Perform Culling & LOD selection;
+if (Has shadow casters?) then (yes)
+  :Shadow Passes (CSM / Spot / Point);
+endif
+:Geometry Pass (G-Buffer) -> MRTs:
+note right
+ RT0: Albedo
+ RT1: Normal + Roughness
+ RT2: Material Params (Metallic, AO, Emissive)
+ Depth buffer
+end note
+:SSAO (optional) -> AO buffer;
+:Deferred Lighting Pass:
+note right
+ Reads G-Buffer, AO, Shadow Maps, IBL
+ Produces HDR color buffer
+end note
+:Forward Pass (transparent, particles, decals);
+:TAA (reproject + blend with history) -> Temporal buffer;
+:Post Process Chain:
+note right
+ - Bloom (downsample + blur + upsample)
+ - Tone Mapping (ACES / Reinhard)
+ - Color Grading, Film Grain
+ - FXAA/TAA resolve
+end note
+:UI / Overlay (forward);
+:Gamma Correction / Compose final backbuffer;
+:Present / SwapBuffers;
+stop
+@enduml
 
 ---
 
