@@ -4,18 +4,18 @@
 MonacoEngine es un motor gráfico 3D educativo desarrollado para la materia de Gráficas Computacionales. Tiene por objetivo servir como base para exploración de pipelines gráficos, renderizado, manejo de recursos, escenas y shaders.
 
 ## 📌 Índice  
-- Resumen  
-- Objetivos del proyecto  
-- Arquitectura general  
-  - Componentes principales  
-  - Relaciones operativas  
-- Pipeline gráfico implementado  
-- Flujo de inicialización  
-- Flujo de render (por frame)  
-- Clases / API clave  
-- Requisitos / Cómo ejecutar  
-- Limitaciones y trabajo futuro  
-- Créditos / Referencias  
+- [Resumen](#-resumen)  
+- [Objetivos del proyecto](#-objetivos-del-proyecto)  
+- [Arquitectura general](#-arquitectura-general)  
+  - [Componentes principales](#componentes-principales)  
+  - [Relaciones operativas](#relaciones-operativas)  
+- [Pipeline gráfico implementado](#-pipeline-gráfico-implementado)  
+- [Flujo de inicialización](#-flujo-de-inicialización)  
+- [Flujo de render (por-frame)](#-flujo-de-render-por-frame)  
+- [Clases / API clave](#-clases--api-clave-ejemplos)  
+- [Requisitos / Cómo ejecutar](#-requisitos--cómo-ejecutar)  
+- [Limitaciones y trabajo futuro](#-limitaciones-y-trabajo-futuro)  
+- [Créditos / Referencias](#-créditos--referencias)  
 
 ---
 
