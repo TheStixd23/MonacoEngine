@@ -29,9 +29,6 @@
     <ClCompile Include="source\Device.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="include\DeviceContext.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="source\Texture.cpp">
       <Filter>source</Filter>
     </ClCompile>
@@ -42,6 +39,9 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="source\DepthStencilView.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DeviceContext.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
