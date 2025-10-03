@@ -1,101 +1,136 @@
-MonacoEngine
-📌 Descripción del Proyecto
+# 🛠️ MonacoEngine — Motor Gráfico (Proyecto Parcial)
 
-MonacoEngine es un motor gráfico desarrollado en C++ con DirectX 11, orientado a la experimentación con renderizado en tiempo real y gestión de recursos gráficos.
-Este proyecto forma parte del parcial de Gráficas Computacionales 3D y tiene como objetivo implementar un pipeline gráfico completo, documentar su arquitectura y demostrar su funcionamiento.
+## 📋 Resumen  
+MonacoEngine es un motor gráfico 3D educativo desarrollado para la materia de Gráficas Computacionales. Tiene por objetivo servir como base para exploración de pipelines gráficos, renderizado, manejo de recursos, escenas y shaders.
 
-🎯 Objetivos del Proyecto
+## 📌 Índice  
+- Resumen  
+- Objetivos del proyecto  
+- Arquitectura general  
+  - Componentes principales  
+  - Relaciones operativas  
+- Pipeline gráfico implementado  
+- Flujo de inicialización  
+- Flujo de render (por frame)  
+- Clases / API clave  
+- Requisitos / Cómo ejecutar  
+- Limitaciones y trabajo futuro  
+- Créditos / Referencias  
 
-Comprender y aplicar los conceptos del pipeline gráfico en Direct3D 11.
+---
 
-Implementar clases para la carga, gestión y renderizado de texturas, buffers y shaders.
+## 🎯 Objetivos del proyecto  
+| Objetivo | Descripción |
+|---|---|
+| Arquitectura modular | Separar responsabilidades (gestión de ventana, dispositivo gráfico, recursos, escena, presentación) |
+| Comprensión de pipeline | Implementar paso a paso la creación de recursos, configuración del pipeline y ciclo de render |
+| Render mínimo funcional | Mostrar un objeto (por ejemplo, un cubo texturizado) actualizándose por frame |
+| Extensibilidad | Proveer funciones `update()` / `render()` o puntos de extensión para agregar más características |
+| Gestión de recursos | Manejo de buffers, texturas, shaders y limpieza adecuada |
 
-Diseñar una arquitectura modular que permita extender el motor con nuevas funcionalidades.
+---
 
-Generar documentación clara y profesional para el parcial.
+## 🏗 Arquitectura general
 
-🛠️ Arquitectura del Motor
+> Diseño modular que favorece la mantenibilidad, escalabilidad y extensión futura.
 
-El motor está compuesto por varios módulos principales:
+### Componentes principales
 
-🔹 Diagrama de Arquitectura (UML simplificado)
-classDiagram
-    class Engine {
-        +Init()
-        +Run()
-        +Shutdown()
-    }
+| Componente | Responsabilidad | API / recursos clave |
+|---|---|---|
+| **Window / Ventana** | Crear y manejar la ventana de la aplicación (resolución, eventos) | `init(...)`, `destroy()`, manejo de callbacks de ventana |
+| **GraphicsDevice / Contexto** | Inicializar el medio gráfico (OpenGL, Vulkan, etc.), gestionar comandos | creación de buffers, estados gráﬁcos, envío de draw calls |
+| **Swap Chain / Presentación** | Intercambiar buffers frente / posterior para mostrar el frame | `present()`, configurar doble/triple búfer |
+| **Shader Manager** | Cargar, compilar y gestionar programas de shaders (vertex, fragment, etc.) | `loadShader()`, `useShader()`, recompilación |
+| **Mesh / Geometry** | Representar geometría 3D con vértices, índices, normales, UVs | `VertexBuffer`, `IndexBuffer`, `Draw()` |
+| **Material / Textura** | Asociar propiedades visuales (texturas, colores, mapas normales) | binding de texturas, parámetros uniformes |
+| **Camera** | Coordenadas de vista y proyección | matrices view / proj, actualización de posición |
+| **Light / Sistema de iluminación** | Definir fuentes de luz, parámetros (color, posición, intensidad) | cálculo de iluminación en shader |
+| **Renderer / Pipeline** | Orquestar el flujo de renderizado usando los componentes anteriores | `render(scene)`, administración de estados gráficos |
+| **Scene / Escena** | Mantener los objetos, luces y cámara de la escena | `addObject()`, `update()`, `getRenderableObjects()` |
 
-    class Device {
-        +CreateResources()
-    }
+### Relaciones operativas
 
-    class DeviceContext {
-        +Draw()
-        +SetPipelineState()
-    }
+El flujo típico entre componentes es:
 
-    class Texture {
-        +LoadFromFile()
-        +Bind()
-    }
+1. `Window` inicializa la ventana del sistema.  
+2. `GraphicsDevice` crea el contexto/gráficos.  
+3. `SwapChain` se conecta al `GraphicsDevice` y `Window` para la presentación.  
+4. `Renderer` consulta la `Scene` para obtener objetos visibles.  
+5. Por cada objeto, el `Renderer` selecciona el `Mesh`, el `Material`, obtiene el `Shader` desde `Shader Manager`, y envía draw calls al `GraphicsDevice`.  
+6. Al final del frame, se llama a `SwapChain.present()` para mostrar el resultado en pantalla.
 
-    class Shader {
-        +Compile()
-        +Bind()
-    }
+---
 
-    class Pipeline {
-        +SetShaders()
-        +SetResources()
-        +Execute()
-    }
+## 📷 Pipeline gráfico implementado
 
-    Engine --> Device
-    Engine --> DeviceContext
-    DeviceContext --> Pipeline
-    Pipeline --> Shader
-    Pipeline --> Texture
+Este es el pipeline gráfico básico que MonacoEngine debe implementar:
 
-🎨 Explicación del Pipeline Implementado
+1. **Inicialización gráfica**  
+   - Crear contexto / dispositivo gráfico  
+   - Crear y compilar shaders  
+   - Crear buffers (vertex, index, constantes)  
+   - Configurar estado gráfico (viewport, rasterizador, depth test, blending)
 
-El pipeline implementado en MonacoEngine sigue la estructura de Direct3D 11:
+2. **Transformaciones / Etapa de vértice**  
+   - Aplicar transformaciones: `model → world → view → projection`  
+   - Realizar frustum culling o backface culling si aplica  
+   - Enviar posiciones, normales, UVs a la etapa de fragmento
 
-Input Assembler (IA)
+3. **Rasterización / fragmentación**  
+   - Rasterizar primitivas (triángulos)  
+   - Interpolar atributos (normales, UVs) por fragmento
 
-Se cargan vértices y sus atributos desde vertex buffers.
+4. **Shading / iluminación**  
+   - Ejecutar shader fragmento para calcular color: ambient + difusa + especular  
+   - Muestreo de texturas, mapas normales u otros mapas
 
-Se aplican layouts para interpretar la información.
+5. **Depth / Blending / Salida**  
+   - Prueba de profundidad (z-buffer)  
+   - Blending si hay transparencia  
+   - Escritura al frame buffer
 
-Vertex Shader (VS)
+6. **Presentación / Swap**  
+   - Intercambiar los buffers para mostrar la imagen final
 
-Procesa cada vértice (posición, color, normales, UV).
+---
 
-Realiza transformaciones MVP (Model-View-Projection).
+## 🚀 Flujo de inicialización
 
-Rasterizer Stage (RS)
+1. `Window.init(...)` → crea la ventana del sistema  
+2. `GraphicsDevice.init()` → inicializa el contexto gráfico  
+3. `ShaderManager.loadShaders(...)` → compila los shaders iniciales  
+4. `Mesh` / `Material` se crean / cargan, buffers asignados  
+5. Estado gráfico configurado (viewport, pruebas de profundidad, etc.)  
+6. Bucle principal: `while(running) { update(); render(); }`
 
-Convierte la geometría en fragmentos/píxeles.
+---
 
-Se aplican reglas de recorte, backface culling y viewport.
+## ⏱ Flujo de render (por frame)
 
-Pixel Shader (PS)
+1. Limpiar buffers (color, profundidad)  
+2. Preparar la lista de objetos visibles / frustum culling  
+3. Para cada objeto:  
+   - Actualizar constantes (matrices, parámetros del material)  
+   - Bind de shader / texturas / recursos  
+   - Establecer buffers de vértices / índices  
+   - Llamada de dibujo (draw)  
+4. Ejecutar efectos post-proceso si existen  
+5. Presentar / swap buffers  
 
-Calcula el color de cada píxel.
+---
 
-Se combinan texturas, luces y materiales.
+## 📚 Clases / API clave (ejemplos)
 
-Output Merger (OM)
+Aquí algunos métodos importantes que podrían existir:
 
-Se integran los resultados en el Render Target View (RTV).
+- `Window::init(hInst, width, height)`  
+- `GraphicsDevice::createBuffer(...)`, `createTexture(...)`, `setRenderState(...)`  
+- `ShaderManager::loadShader(name, vsPath, fsPath)`  
+- `Mesh::setVertices(...)`, `Mesh::draw()`  
+- `Material::bind()`  
+- `Renderer::render(Scene &scene)`  
+- `Camera::getViewProjMatrix()`  
+- `Light::parameters()`  
 
-Aplica Depth-Stencil View (DSV) para pruebas de profundidad y stencil.
-
-📂 Estructura del Proyecto
-MonacoEngine/
- ├── include/        # Headers del motor
- ├── src/            # Implementación de clases
- ├── shaders/        # HLSL shaders
- ├── assets/         # Texturas y modelos
- ├── README.md       # Documentación
- └── main.cpp        # Punto de entrada
+---
