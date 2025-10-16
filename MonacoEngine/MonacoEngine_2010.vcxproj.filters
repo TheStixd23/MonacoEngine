@@ -50,6 +50,7 @@
     <ClCompile Include="source\InputLayout.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="source\ShaderProgram.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MonacoEngine.fx">
@@ -94,6 +95,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\ShaderProgram.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Resource.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

@@ -7,64 +7,106 @@ class DeviceContext;
 class Texture;
 class DepthStencilView;
 
-/**
- * @class RenderTargetView
- * @brief Envuelve un ID3D11RenderTargetView para usar una textura como destino de render.
- *
- * Esta clase se encarga de crear, configurar y usar un Render Target View (RTV) en Direct3D 11.
- * Básicamente te permite enviar el resultado del renderizado (color) a texturas o al back buffer.
- */
-class RenderTargetView {
+class
+    RenderTargetView {
 public:
-	/** Constructor por defecto */
-	RenderTargetView() = default;
+    /**
+     * @brief Constructor por defecto.
+     */
+    RenderTargetView() = default;
 
-	/** Destructor por defecto.
-	 * @note No libera automáticamente, hay que llamar a destroy().
-	 */
-	~RenderTargetView() = default;
+    /**
+     * @brief Destructor por defecto.
+     * @details No libera automáticamente el recurso COM; llamar a destroy().
+     */
+    ~RenderTargetView() = default;
 
-	/** Inicializa el RTV usando el back buffer de la swap chain */
-	HRESULT init(Device& device, Texture& backBuffer, DXGI_FORMAT Format);
+    /**
+     * @brief Inicializa el Render Target View desde el back buffer.
+     *
+     * @param device     Dispositivo con el que se crea el recurso.
+     * @param backBuffer Textura que representa el back buffer (swap chain).
+     * @param Format     Formato del RTV (ej. @c DXGI_FORMAT_R8G8B8A8_UNORM).
+     * @return @c S_OK si fue exitoso; código @c HRESULT en caso contrario.
+     *
+     * @post Si retorna @c S_OK, @c m_renderTargetView != nullptr.
+     */
+    HRESULT
+        init(Device& device, Texture& backBuffer, DXGI_FORMAT Format);
 
-	/** Inicializa el RTV desde una textura genérica, útil para render targets auxiliares */
-	HRESULT init(Device& device,
-		Texture& inTex,
-		D3D11_RTV_DIMENSION ViewDimension,
-		DXGI_FORMAT Format);
+    /**
+     * @brief Inicializa el Render Target View desde una textura genérica.
+     *
+     * @param device        Dispositivo con el que se crea el recurso.
+     * @param inTex         Textura que será usada como destino de renderizado.
+     * @param ViewDimension Dimensión de la vista (ej. @c D3D11_RTV_DIMENSION_TEXTURE2D).
+     * @param Format        Formato del RTV.
+     * @return @c S_OK si fue exitoso; código @c HRESULT en caso contrario.
+     *
+     * @note Útil para render targets auxiliares (G-Buffer, mapas de sombra, etc.).
+     */
+    HRESULT
+        init(Device& device,
+            Texture& inTex,
+            D3D11_RTV_DIMENSION ViewDimension,
+            DXGI_FORMAT Format);
 
-	/** Actualiza parámetros internos del RTV.
-	 * @note Placeholder por ahora, útil si quieres cambiar cosas dinámicamente en el futuro.
-	 */
-	void update();
+    /**
+     * @brief Actualiza parámetros internos del RTV.
+     *
+     * Método de marcador para futuras extensiones (por ejemplo, cambiar dinámicamente
+     * la configuración del RTV o recrearlo).
+     *
+     * @note Actualmente no realiza ninguna operación.
+     */
+    void
+        update();
 
-	/**
-	 * @brief Limpia y asigna el RTV junto con un Depth Stencil View.
-	 *
-	 * Esto llama a OMSetRenderTargets y ClearRenderTargetView para preparar
-	 * el render target y limpiar con el color que quieras.
-	 */
-	void render(DeviceContext& deviceContext,
-		DepthStencilView& depthStencilView,
-		unsigned int numViews,
-		const float ClearColor[4]);
+    /**
+     * @brief Limpia y asigna el RTV junto con un Depth Stencil View.
+     *
+     * Llama a @c OMSetRenderTargets y limpia el RTV con un color dado.
+     *
+     * @param deviceContext    Contexto de dispositivo donde se aplicará.
+     * @param depthStencilView Depth Stencil View a asociar.
+     * @param numViews         Número de vistas de render (típicamente 1).
+     * @param ClearColor       Color RGBA usado para limpiar el RTV.
+     *
+     * @pre @c m_renderTargetView debe estar creado con init().
+     */
+    void
+        render(DeviceContext& deviceContext,
+            DepthStencilView& depthStencilView,
+            unsigned int numViews,
+            const float ClearColor[4]);
 
-	/**
-	 * @brief Asigna el RTV al contexto sin limpiar ni usar Depth Stencil.
-	 *
-	 * Útil si solo quieres enlazar la textura sin tocar el DSV ni limpiar nada.
-	 */
-	void render(DeviceContext& deviceContext,
-		unsigned int numViews);
+    /**
+     * @brief Asigna el RTV al contexto sin limpiar ni usar Depth Stencil.
+     *
+     * Llama a @c OMSetRenderTargets solo con el RTV.
+     *
+     * @param deviceContext Contexto de dispositivo donde se aplicará.
+     * @param numViews      Número de vistas de render (típicamente 1).
+     *
+     * @pre @c m_renderTargetView debe estar creado con init().
+     */
+    void
+        render(DeviceContext& deviceContext,
+            unsigned int numViews);
 
-	/** Libera el recurso COM de Direct3D 11.
-	 * @note Seguro llamarlo varias veces.
-	 */
-	void destroy();
-
+    /**
+     * @brief Libera el recurso @c ID3D11RenderTargetView.
+     *
+     * Idempotente: puede llamarse múltiples veces de forma segura.
+     *
+     * @post @c m_renderTargetView == nullptr.
+     */
+    void
+        destroy();
 private:
-	/** Puntero al recurso COM de Direct3D 11 para el Render Target View.
-	 * Válido tras init(), nullptr tras destroy().
-	 */
-	ID3D11RenderTargetView* m_renderTargetView = nullptr;
+    /**
+     * @brief Recurso COM de Direct3D 11 para la vista de Render Target.
+     * @details Válido tras init(); @c nullptr después de destroy().
+     */
+    ID3D11RenderTargetView* m_renderTargetView = nullptr;
 };
