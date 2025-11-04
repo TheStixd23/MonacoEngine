@@ -142,4 +142,3 @@ Buffer::createBuffer(Device& device,
 	}
 	return S_OK;
 }
-
