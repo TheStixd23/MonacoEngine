@@ -1,4 +1,3 @@
-
 #pragma once
 #include "Prerequisites.h"
 #include "InputLayout.h"
