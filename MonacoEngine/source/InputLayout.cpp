@@ -1,4 +1,3 @@
-
 #include "InputLayout.h"
 #include "Device.h"
 #include "DeviceContext.h"
