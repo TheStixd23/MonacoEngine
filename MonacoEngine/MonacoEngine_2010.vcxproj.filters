@@ -50,10 +50,8 @@
     <ClCompile Include="source\InputLayout.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="source\ShaderProgram.cpp" />
     <ClCompile Include="source\Buffer.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ShaderProgram.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
